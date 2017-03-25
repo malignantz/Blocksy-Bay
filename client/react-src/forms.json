@@ -77,11 +77,11 @@
     "title": "Add Data to the Blockchain (OP_RETURN)",
     "actionName": "addData",
     "formInputs": [
-      {
-        "label": "Wallet ID to Send Form",
-        "name": "walletId",
-        "type": "text",
-      },
+      // {
+      //   "label": "Wallet ID to Send Form",
+      //   "name": "walletId",
+      //   "type": "text",
+      // },
       // {
       //   "label": "Wallet Passphrase",
       //   "name": "passphrase",
@@ -97,6 +97,11 @@
       {
         "label": "Torrent name",
         "name": "torrent",
+        "type": "text",
+      },
+            {
+        "label": "SHA hash",
+        "name": "sha",
         "type": "text",
       },
     ],

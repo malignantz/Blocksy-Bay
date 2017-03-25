@@ -1,103 +1,108 @@
 [
-  {
-    "title": "Get Wallet Information",
-    "actionName": "getWallet",
-    "formClass": "get-wallet",
-    "formInputs": [
-      {
-        "label": "Wallet ID",
-        "name": "walletId",
-        "type": "text",
-      },
-    ]
-  },
-  {
-    "title": "Create Wallet",
-    "actionName": "createWallet",
-    "formClass": "create-wallet",
-    "formInputs": [
-      {
-        "label": "Wallet ID",
-        "name": "walletId",
-        "type": "text",
-      },
-      {
-        "label": "Wallet Passphrase",
-        "name": "passphrase",
-        "type": "password",
-      },
-    ],
-  },
-  {
-    "title": "Get New Address",
-    "actionName": "getAddress",
-    "formClass": "get-address",
-    "formInputs": [
-      {
-        "label": "Wallet ID",
-        "name": "walletId",
-        "type": "text",
-      },
-    ],
-  },
-  {
-    "title": "Send Transaction",
-    "actionName": "sendTx",
-    "formInputs": [
-      {
-        "label": "Wallet ID to Send Form",
-        "name": "walletId",
-        "type": "text",
-      },
-      {
-        "label": "Wallet Passphrase",
-        "name": "passphrase",
-        "type": "password",
-      },
-      {
-        "label": "Destination Address",
-        "name": "destination",
-        "type": "text",
-      },
-      {
-        "label": "TX Fee Rate (per KB)",
-        "name": "fee",
-        "type": "number",
-        "min": "0",
-        "step": ".0001",
-      },
-      {
-        "label": "Amount to send",
-        "name": "tx-amount",
-        "type": "number",
-      },
-    ],
-  },
+  // {
+  //   "title": "Get Wallet Information",
+  //   "actionName": "getWallet",
+  //   "formClass": "get-wallet",
+  //   "formInputs": [
+  //     {
+  //       "label": "Wallet ID",
+  //       "name": "walletId",
+  //       "type": "text",
+  //     },
+  //   ]
+  // },
+  // {
+  //   "title": "Create Wallet",
+  //   "actionName": "createWallet",
+  //   "formClass": "create-wallet",
+  //   "formInputs": [
+  //     {
+  //       "label": "Wallet ID",
+  //       "name": "walletId",
+  //       "type": "text",
+  //     },
+  //     {
+  //       "label": "Wallet Passphrase",
+  //       "name": "passphrase",
+  //       "type": "password",
+  //     },
+  //   ],
+  // },
+  // {
+  //   "title": "Get New Address",
+  //   "actionName": "getAddress",
+  //   "formClass": "get-address",
+  //   "formInputs": [
+  //     {
+  //       "label": "Wallet ID",
+  //       "name": "walletId",
+  //       "type": "text",
+  //     },
+  //   ],
+  // },
+  // {
+  //   "title": "Send Transaction",
+  //   "actionName": "sendTx",
+  //   "formInputs": [
+  //     {
+  //       "label": "Wallet ID to Send Form",
+  //       "name": "walletId",
+  //       "type": "text",
+  //     },
+  //     {
+  //       "label": "Wallet Passphrase",
+  //       "name": "passphrase",
+  //       "type": "password",
+  //     },
+  //     {
+  //       "label": "Destination Address",
+  //       "name": "destination",
+  //       "type": "text",
+  //     },
+  //     {
+  //       "label": "TX Fee Rate (per KB)",
+  //       "name": "fee",
+  //       "type": "number",
+  //       "min": "0",
+  //       "step": ".0001",
+  //     },
+  //     {
+  //       "label": "Amount to send",
+  //       "name": "tx-amount",
+  //       "type": "number",
+  //     },
+  //   ],
+  // },
   {
     "title": "Add Data to the Blockchain (OP_RETURN)",
     "actionName": "addData",
     "formInputs": [
+      // {
+      //   "label": "Wallet ID to Send Form",
+      //   "name": "walletId",
+      //   "type": "text",
+      // },
+      // {
+      //   "label": "Wallet Passphrase",
+      //   "name": "passphrase",
+      //   "type": "password",
+      // },
+      // {
+      //   "label": "TX Fee Rate (per KB)",
+      //   "name": "fee",
+      //   "type": "number",
+      //   "min": "0",
+      //   "step": ".0001",
+      // },
       {
-        "label": "Wallet ID to Send Form",
-        "name": "walletId",
+        "label": "Torrent name",
+        "name": "torrent",
         "type": "text",
       },
-      {
-        "label": "Wallet Passphrase",
-        "name": "passphrase",
-        "type": "password",
-      },
-      {
-        "label": "TX Fee Rate (per KB)",
-        "name": "fee",
-        "type": "number",
-        "min": "0",
-        "step": ".0001",
-      },
-      {
-        "label": "Data",
-        "name": "data",
-        "type": "textarea",
+            {
+        "label": "SHA hash",
+        "name": "sha",
+        "type": "text",
       },
     ],
   },

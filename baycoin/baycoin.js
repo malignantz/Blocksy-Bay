@@ -57,8 +57,8 @@ const fetchLink = (data) => {
     const options = {
       method: props.type,
       uri: props.url,
-      body: props.data,
-      json: true
+      body: JSON.stringify(props.data),
+     // json: true
     };
     // This is needed as creating a message doesn't allow JSON header to be set
     if (props.type === 'POST') delete options.json;
@@ -114,35 +114,65 @@ const searchHash = (hash, name) => {
         const scriptContent = decompile(data.outputs[0].script.substring(4));
         if (scriptContent.includes('paste.sh')) {
           console.log(`Url: ${scriptContent}`);
-          return fetchData(scriptContent);
+          return fetchData(scriptContent).then(data => data);
         }
       } catch (err) {
         console.log(err);
       }
-    });
+    }).catch(fail => 'searchHashFailed');
+   return 'data';
 };
 
 // Search a wallet transaction history and sends it to searchHash to get the magnet links.
-const searchLink = (name) => {
+const oldSearchLink = (name) => {
   return fetchLink({type: 'getTrans'})
     .then(data => {
        // Loops through all data
-      return Promise.all(
-        data.map(b => searchHash(b.hash, name))
-      )
+       
+       data = JSON.parse(data);
+       //console.log('Line131',data,typeof data);
+    })
       // Ensure invalid transactions does not exit
-      .then(data => {
+    .then(data => {
+        return Promise.all(
+          data.map(b => searchHash(b.hash, name))
+        ).then(x=>console.log('***',data))
+       // console.log('Line150',data);
         return data.filter(b => b);
       })
       // Flatten the array. [[1,2],[3,4]] => [1,2,3,4]
       .then(data => [].concat.apply([], data))
       // Filter the array based on name parameter
-      .then(data => data.filter(b => !name || b.toLowerCase().includes(name.toLowerCase().replace(' ', '+'))))
+      .then(data => 
+        {
+          
+            data.filter(currName => !currName || currName.toLowerCase().includes(name));
+        })
       .then(magnetLinks => {
         console.log(magnetLinks);
         return magnetLinks;
       });
-    });
 };
+
+const searchLink = (name) => {
+  while(name.includes(' ')){
+    name = name.replace(' ','+').toLowerCase();
+  }
+  return fetchLink({type: 'getTrans'})
+    .then(data => {
+       // Loops through all data
+       data = JSON.parse(data);
+       console.log('Line131',data,typeof data);
+       return data;
+    })
+    .then(data => {
+      var proms = data.map(b => searchHash(b.hash, name));
+      return Promise.all(proms).then(data => {
+        console.log('170',data);
+        return data;
+        });
+      });
+};
+
 
 export { writeLink, searchLink, searchHash };

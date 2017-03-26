@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const addTorrentHandler = require('./requests/addTorrent');
 const childProcess = require('child_process');
 const request = require('request');
-const baycoin = require('./baycoin-lib/baycoin')
+const baycoin = require('../baycoin-lib/baycoin')
  // { writeLink, searchLink, searchHash } from './baycoin';
 
 const app = express();
@@ -22,7 +22,6 @@ app.get('/', (req, res) => {
 });
 
 
-
 app.get('/search', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   baycoin.searchLink(req.query.text ? req.query.text : '')
@@ -32,7 +31,7 @@ app.get('/search', (req, res) => {
 app.post('/submitBatch', (req,res) => {
 	// UNTESTED!!! Try at your own risk! To Garrett!
   let magnets = req.body.magnets;
-  baycoin.writeLink(magnets.join('\n'))
+  baycoin.writeLink(magnets)
     .then(hash => res.send({result: "BOOYAH!"}));
 
   // let { names, datas } = req.body;

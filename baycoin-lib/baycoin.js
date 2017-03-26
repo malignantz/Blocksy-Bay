@@ -5,6 +5,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.searchHash = exports.searchLink = exports.writeLink = undefined;
 
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
 var _promise = require('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
@@ -71,8 +79,7 @@ var fetchLink = function fetchLink(data) {
     var options = {
       method: props.type,
       uri: props.url,
-      body: props.data,
-      json: true
+      body: (0, _stringify2.default)(props.data)
     };
     // This is needed as creating a message doesn't allow JSON header to be set
     if (props.type === 'POST') delete options.json;
@@ -101,9 +108,7 @@ var decompile = function decompile(hexx) {
  * magnet:...&dn={name}\n
  */
 var writeLink = function writeLink(data) {
-  var pasteUrl = undefined;
   return (0, _paste.writeData)(data).then(function (url) {
-    pasteUrl = url;
     console.log('Url: ' + url);
     return fetchLink({
       type: 'addData',
@@ -114,7 +119,7 @@ var writeLink = function writeLink(data) {
   .then(function (data) {
     var dataObj = JSON.parse(data);
     console.log('Here\'s your data: ' + dataObj.hash);
-    return { hash: dataObj.hash, pasteUrl: pasteUrl };
+    return dataObj.hash;
   });
 };
 
@@ -127,39 +132,71 @@ var searchHash = function searchHash(hash, name) {
       var scriptContent = decompile(data.outputs[0].script.substring(4));
       if (scriptContent.includes('paste.sh')) {
         console.log('Url: ' + scriptContent);
-        return (0, _paste.fetchData)(scriptContent);
+        return (0, _paste.fetchData)(scriptContent).then(function (data) {
+          return data;
+        });
       }
     } catch (err) {
       console.log(err);
     }
+  }).catch(function (fail) {
+    return 'searchHashFailed';
   });
+  return 'data';
 };
 
 // Search a wallet transaction history and sends it to searchHash to get the magnet links.
-var searchLink = function searchLink(name) {
+var oldSearchLink = function oldSearchLink(name) {
   return fetchLink({ type: 'getTrans' }).then(function (data) {
     // Loops through all data
+
+    data = JSON.parse(data);
+    //console.log('Line131',data,typeof data);
+  })
+  // Ensure invalid transactions does not exit
+  .then(function (data) {
     return _promise2.default.all(data.map(function (b) {
       return searchHash(b.hash, name);
-    }))
-    // Ensure invalid transactions does not exit
-    .then(function (data) {
-      return data.filter(function (b) {
-        return b;
-      });
-    })
-    // Flatten the array. [[1,2],[3,4]] => [1,2,3,4]
-    .then(function (data) {
-      return [].concat.apply([], data);
-    })
-    // Filter the array based on name parameter
-    .then(function (data) {
-      return data.filter(function (b) {
-        return !name || b.toLowerCase().includes(name.toLowerCase().replace(' ', '+'));
-      });
-    }).then(function (magnetLinks) {
-      console.log(magnetLinks);
-      return magnetLinks;
+    })).then(function (x) {
+      return console.log('***', data);
+    });
+    // console.log('Line150',data);
+    return data.filter(function (b) {
+      return b;
+    });
+  })
+  // Flatten the array. [[1,2],[3,4]] => [1,2,3,4]
+  .then(function (data) {
+    return [].concat.apply([], data);
+  })
+  // Filter the array based on name parameter
+  .then(function (data) {
+
+    data.filter(function (currName) {
+      return !currName || currName.toLowerCase().includes(name);
+    });
+  }).then(function (magnetLinks) {
+    console.log(magnetLinks);
+    return magnetLinks;
+  });
+};
+
+var searchLink = function searchLink(name) {
+  while (name.includes(' ')) {
+    name = name.replace(' ', '+').toLowerCase();
+  }
+  return fetchLink({ type: 'getTrans' }).then(function (data) {
+    // Loops through all data
+    data = JSON.parse(data);
+    console.log('Line131', data, typeof data === 'undefined' ? 'undefined' : (0, _typeof3.default)(data));
+    return data;
+  }).then(function (data) {
+    var proms = data.map(function (b) {
+      return searchHash(b.hash, name);
+    });
+    return _promise2.default.all(proms).then(function (data) {
+      console.log('170', data);
+      return data;
     });
   });
 };

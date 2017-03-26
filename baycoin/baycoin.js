@@ -57,8 +57,8 @@ const fetchLink = (data) => {
     const options = {
       method: props.type,
       uri: props.url,
-      body: props.data,
-      json: true
+      body: JSON.stringify(props.data),
+     // json: true
     };
     // This is needed as creating a message doesn't allow JSON header to be set
     if (props.type === 'POST') delete options.json;
@@ -127,17 +127,25 @@ const searchLink = (name) => {
   return fetchLink({type: 'getTrans'})
     .then(data => {
        // Loops through all data
-      return Promise.all(
+       console.log('Line131',data);
+       data = JSON.parse(data);
+      Promise.all(
         data.map(b => searchHash(b.hash, name))
-      )
-      // Ensure invalid transactions does not exit
-      .then(data => {
-        return data.filter(b => b);
+      ).then(promArray => {
+        console.log('Line150',promArray);
+        return promArray.filter(b => b);
       })
+      // Ensure invalid transactions does not exit
       // Flatten the array. [[1,2],[3,4]] => [1,2,3,4]
       .then(data => [].concat.apply([], data))
       // Filter the array based on name parameter
-      .then(data => data.filter(b => !name || b.toLowerCase().includes(name.toLowerCase().replace(' ', '+'))))
+      .then(data => 
+        {
+          while(name.includes(' ')){
+            name = name.replace(' ','+').toLowerCase();
+          }
+            data.filter(currName => !currName || currName.toLowerCase().includes(name));
+        })
       .then(magnetLinks => {
         console.log(magnetLinks);
         return magnetLinks;

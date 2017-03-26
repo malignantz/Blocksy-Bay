@@ -5,6 +5,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.searchHash = exports.searchLink = exports.writeLink = undefined;
 
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
 var _promise = require('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
@@ -71,8 +75,7 @@ var fetchLink = function fetchLink(data) {
     var options = {
       method: props.type,
       uri: props.url,
-      body: props.data,
-      json: true
+      body: (0, _stringify2.default)(props.data)
     };
     // This is needed as creating a message doesn't allow JSON header to be set
     if (props.type === 'POST') delete options.json;
@@ -101,9 +104,7 @@ var decompile = function decompile(hexx) {
  * magnet:...&dn={name}\n
  */
 var writeLink = function writeLink(data) {
-  var pasteUrl = undefined;
   return (0, _paste.writeData)(data).then(function (url) {
-    pasteUrl = url;
     console.log('Url: ' + url);
     return fetchLink({
       type: 'addData',
@@ -114,7 +115,7 @@ var writeLink = function writeLink(data) {
   .then(function (data) {
     var dataObj = JSON.parse(data);
     console.log('Here\'s your data: ' + dataObj.hash);
-    return { hash: dataObj.hash, pasteUrl: pasteUrl };
+    return dataObj.hash;
   });
 };
 
@@ -139,23 +140,28 @@ var searchHash = function searchHash(hash, name) {
 var searchLink = function searchLink(name) {
   return fetchLink({ type: 'getTrans' }).then(function (data) {
     // Loops through all data
-    return _promise2.default.all(data.map(function (b) {
+    console.log('Line131', data);
+    data = JSON.parse(data);
+    _promise2.default.all(data.map(function (b) {
       return searchHash(b.hash, name);
-    }))
-    // Ensure invalid transactions does not exit
-    .then(function (data) {
-      return data.filter(function (b) {
+    })).then(function (promArray) {
+      console.log('Line150', promArray);
+      return promArray.filter(function (b) {
         return b;
       });
     })
+    // Ensure invalid transactions does not exit
     // Flatten the array. [[1,2],[3,4]] => [1,2,3,4]
     .then(function (data) {
       return [].concat.apply([], data);
     })
     // Filter the array based on name parameter
     .then(function (data) {
-      return data.filter(function (b) {
-        return !name || b.toLowerCase().includes(name.toLowerCase().replace(' ', '+'));
+      while (name.includes(' ')) {
+        name = name.replace(' ', '+').toLowerCase();
+      }
+      data.filter(function (currName) {
+        return !currName || currName.toLowerCase().includes(name);
       });
     }).then(function (magnetLinks) {
       console.log(magnetLinks);

@@ -1,24 +1,45 @@
 import $ from 'jquery';
 import submitAction from './submitAction';
 
-import { makeScript }from '../utils/makeScript';
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
 
-// BAD. Replace with endpoints
-// import { writeLink, searchLink } from '../baycoin/baycoin';
-/* globals
-  window
-*/
 function addToBatch(){
-    let name = $('#torrentname').val();
-    while(name.includes("'")) {
-      name = name.replace("'",'');
-    }
- 
-    window.batchData.names.push(name);
-    // console.log(batchData.names.length,batchData.datas.length);
-    $('#torrentname').val('');
-    // $('#data').val('');
+  let name = $('#magnets').val();
+  while(name.includes("'")) {
+    name = name.replace("'",'');
   }
+
+  window.batchData.names.push(name);
+  $('#magnets').val('');
+}
+
+function submitSearch() {
+  var search = $('#search').val();
+  $.get( "/search?text=" + search, function( data ) {
+    rewriteTable(fetchCodes(data));
+  });
+}
+
+function fetchCodes(data) {
+  var codes = '';
+  data.result.map(function(magnet) {
+    codes += `<tr><td>${fetchName(magnet)}</td><td><a href="${magnet}">Download</a></td></tr>`
+  });
+
+  return codes;
+}
+
+function rewriteTable(codes) {
+  $('#table tbody').html('');
+  $('#table tbody').append($(codes));
+}
+
+function fetchName(magnet) {
+  return magnet.substring(magnet.indexOf('&dn=') + 4).split('+').join(' ').split('-').join(' ');
+}
 
 // export for others scripts to use
 window.$ = $;
@@ -26,42 +47,14 @@ window.jQuery = $;
 window.batchData = { names: [], datas: []};
 window.addToBatch = addToBatch;
 window.submitAction = submitAction;
+window.submitSearch = submitSearch;
+
 
 $(() => {
   const indexTemplate = require('./template.html');
-  console.log("HELLO");
-
-  // REPLACE THIS
-  // WITH THIS! :)
-  // $.get('/search?text={tag}', function(data) {
-  //  ... 
-  // });
-  // Client calls sErver
-  // searchLink('').then(magnetObjs => {
-  //   $('#loading').remove();
-  //   magnetObjs = magnetObjs.slice(0,7);
-  //   magnetObjs.forEach(magnetObj => {
-  //     console.log('MagnetObj',magnetObj);
-  //     let { name, link } = magnetObj;
-  //     link = link.trim();
-  //     name = 'tempName_chng_plz';
-  //     while(link.includes('"')){
-  //       link = link.replace('"','');
-  //     }
-  //     while(name.includes('"')){
-  //       name = name.replace('"','');
-  //     }
-  //     $('#table').append($(`<tr><td>${name}</td><td><a href="${link}">Download</a></td></tr>`))
-  //   });
-  // });
-  $('#app').html(indexTemplate);
-  //const formActionButton = $('form button');
-  
-
-  $.get('/node/fee', (data) => {
-    const value = data.rate;
-    $('input[name="fee"]').val(value);
+  $.get( "/search", function( data ) {
+    rewriteTable(fetchCodes(data));
   });
 
-  //formActionButton.on('click', submitAction);
+  $('#app').html(indexTemplate);
 });

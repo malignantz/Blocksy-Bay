@@ -2,7 +2,9 @@ import $ from 'jquery';
 import submitAction from './submitAction';
 
 import { makeScript }from '../utils/makeScript';
-import { writeLink, searchLink } from '../../slim-bcoin/baycoin/baycoin';
+
+// BAD. Replace with endpoints
+// import { writeLink, searchLink } from '../baycoin/baycoin';
 /* globals
   window
 */
@@ -31,7 +33,13 @@ window.submitAction = submitAction;
 
 $(() => {
   const indexTemplate = require('./template.html');
+  console.log("HELLO");
 
+  // REPLACE THIS
+  // WITH THIS! :)
+  // $.get('/search?text={tag}', function(data) {
+  //  ... 
+  // });
   searchLink('').then(magnetObjs => {
     $('#loading').remove();
     magnetObjs = magnetObjs.slice(0,7);

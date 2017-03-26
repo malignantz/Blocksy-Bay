@@ -5,6 +5,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.searchHash = exports.searchLink = exports.writeLink = undefined;
 
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
 var _promise = require('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
@@ -21,7 +25,7 @@ var request = require('request');
 var id = 'primary';
 var passphrase = 'primary';
 var rate = '0.0001';
-var token = '4022d3f1300495e42db532d279e50ac033a0fdd0a6c2d3f87b1904ddee16b854';
+var token = '8ec8a351fd7d0b312a95e93a3ec482709d73c3719e47d7792c7be6dfbf4a3bb1';
 var bcoinPort = 18556;
 var baseRequest = request.defaults({
   baseUrl: 'http://localhost:'.concat(bcoinPort)
@@ -71,7 +75,7 @@ var fetchLink = function fetchLink(data) {
     var options = {
       method: props.type,
       uri: props.url,
-      body: props.data,
+      body: (0, _stringify2.default)(props.data),
       json: true
     };
     // This is needed as creating a message doesn't allow JSON header to be set
@@ -101,9 +105,7 @@ var decompile = function decompile(hexx) {
  * magnet:...&dn={name}\n
  */
 var writeLink = function writeLink(data) {
-  var pasteUrl = undefined;
   return (0, _paste.writeData)(data).then(function (url) {
-    pasteUrl = url;
     console.log('Url: ' + url);
     return fetchLink({
       type: 'addData',
@@ -114,7 +116,7 @@ var writeLink = function writeLink(data) {
   .then(function (data) {
     var dataObj = JSON.parse(data);
     console.log('Here\'s your data: ' + dataObj.hash);
-    return { hash: dataObj.hash, pasteUrl: pasteUrl };
+    return dataObj.hash;
   });
 };
 

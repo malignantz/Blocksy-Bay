@@ -7,7 +7,7 @@ const request = require('request');
 const id = 'primary';
 const passphrase = 'primary';
 const rate = '0.0001';
-const token = '4022d3f1300495e42db532d279e50ac033a0fdd0a6c2d3f87b1904ddee16b854';
+const token = '8ec8a351fd7d0b312a95e93a3ec482709d73c3719e47d7792c7be6dfbf4a3bb1';
 const bcoinPort = 18556;
 const baseRequest = request.defaults({
   baseUrl: 'http://localhost:'.concat(bcoinPort),
@@ -57,7 +57,7 @@ const fetchLink = (data) => {
     const options = {
       method: props.type,
       uri: props.url,
-      body: props.data,
+      body: JSON.stringify(props.data),
       json: true
     };
     // This is needed as creating a message doesn't allow JSON header to be set

@@ -5,6 +5,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.searchHash = exports.searchLink = exports.writeLink = undefined;
 
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
 var _stringify = require('babel-runtime/core-js/json/stringify');
 
 var _stringify2 = _interopRequireDefault(_stringify);
@@ -128,44 +132,71 @@ var searchHash = function searchHash(hash, name) {
       var scriptContent = decompile(data.outputs[0].script.substring(4));
       if (scriptContent.includes('paste.sh')) {
         console.log('Url: ' + scriptContent);
-        return (0, _paste.fetchData)(scriptContent);
+        return (0, _paste.fetchData)(scriptContent).then(function (data) {
+          return data;
+        });
       }
     } catch (err) {
       console.log(err);
     }
+  }).catch(function (fail) {
+    return 'searchHashFailed';
   });
+  return 'data';
 };
 
 // Search a wallet transaction history and sends it to searchHash to get the magnet links.
-var searchLink = function searchLink(name) {
+var oldSearchLink = function oldSearchLink(name) {
   return fetchLink({ type: 'getTrans' }).then(function (data) {
     // Loops through all data
-    console.log('Line131', data);
+
     data = JSON.parse(data);
-    _promise2.default.all(data.map(function (b) {
+    //console.log('Line131',data,typeof data);
+  })
+  // Ensure invalid transactions does not exit
+  .then(function (data) {
+    return _promise2.default.all(data.map(function (b) {
       return searchHash(b.hash, name);
-    })).then(function (promArray) {
-      console.log('Line150', promArray);
-      return promArray.filter(function (b) {
-        return b;
-      });
-    })
-    // Ensure invalid transactions does not exit
-    // Flatten the array. [[1,2],[3,4]] => [1,2,3,4]
-    .then(function (data) {
-      return [].concat.apply([], data);
-    })
-    // Filter the array based on name parameter
-    .then(function (data) {
-      while (name.includes(' ')) {
-        name = name.replace(' ', '+').toLowerCase();
-      }
-      data.filter(function (currName) {
-        return !currName || currName.toLowerCase().includes(name);
-      });
-    }).then(function (magnetLinks) {
-      console.log(magnetLinks);
-      return magnetLinks;
+    })).then(function (x) {
+      return console.log('***', data);
+    });
+    // console.log('Line150',data);
+    return data.filter(function (b) {
+      return b;
+    });
+  })
+  // Flatten the array. [[1,2],[3,4]] => [1,2,3,4]
+  .then(function (data) {
+    return [].concat.apply([], data);
+  })
+  // Filter the array based on name parameter
+  .then(function (data) {
+
+    data.filter(function (currName) {
+      return !currName || currName.toLowerCase().includes(name);
+    });
+  }).then(function (magnetLinks) {
+    console.log(magnetLinks);
+    return magnetLinks;
+  });
+};
+
+var searchLink = function searchLink(name) {
+  while (name.includes(' ')) {
+    name = name.replace(' ', '+').toLowerCase();
+  }
+  return fetchLink({ type: 'getTrans' }).then(function (data) {
+    // Loops through all data
+    data = JSON.parse(data);
+    console.log('Line131', data, typeof data === 'undefined' ? 'undefined' : (0, _typeof3.default)(data));
+    return data;
+  }).then(function (data) {
+    var proms = data.map(function (b) {
+      return searchHash(b.hash, name);
+    });
+    return _promise2.default.all(proms).then(function (data) {
+      console.log('170', data);
+      return data;
     });
   });
 };

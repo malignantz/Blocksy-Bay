@@ -150,6 +150,7 @@ var searchLink = function searchLink(name) {
     })
     // Flatten the array. [[1,2],[3,4]] => [1,2,3,4]
     .then(function (data) {
+      console.log('data153',data);
       return [].concat.apply([], data);
     })
     // Filter the array based on name parameter
@@ -158,7 +159,7 @@ var searchLink = function searchLink(name) {
         return !name || b.toLowerCase().includes(name.toLowerCase().replace(' ', '+'));
       });
     }).then(function (magnetLinks) {
-      console.log(magnetLinks);
+      console.log('Line161maglinks',magnetLinks);
       return magnetLinks;
     });
   });

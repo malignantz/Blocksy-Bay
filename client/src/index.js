@@ -1,10 +1,11 @@
 import $ from 'jquery';
 import submitAction from './submitAction';
 
+
 import { makeScript }from '../utils/makeScript';
 
 // BAD. Replace with endpoints
-// import { writeLink, searchLink } from '../baycoin/baycoin';
+ import { writeLink, searchLink } from '../../baycoin/baycoin';
 /* globals
   window
 */
@@ -33,20 +34,25 @@ window.submitAction = submitAction;
 
 $(() => {
   const indexTemplate = require('./template.html');
-  console.log("HELLO");
+  //console.log("HELLO");
 
   // REPLACE THIS
   // WITH THIS! :)
   // $.get('/search?text={tag}', function(data) {
   //  ... 
   // });
-  searchLink('').then(magnetObjs => {
+ // searchLink('').then(magnetObjs => {
+$.get('/search?text=', function(data) {
     $('#loading').remove();
-    magnetObjs = magnetObjs.slice(0,7);
-    magnetObjs.forEach(magnetObj => {
+    console.log('Data:',data);
+    data = data.result.slice(0,7);
+    data.forEach(magnetObj => {
       console.log('MagnetObj',magnetObj);
-      let { name, link } = magnetObj;
-      link = link.trim();
+      let link = magnetObj.link;
+
+      //let { name, link1 } = magnetObj;
+      console.log(link,typeof link);
+      //link1 = link1.trim();
       name = 'tempName_chng_plz';
       while(link.includes('"')){
         link = link.replace('"','');

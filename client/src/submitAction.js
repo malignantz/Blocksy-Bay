@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { reqProps, checkInputs } from '../utils/utils';
-import { writeLink } from '../../slim-bcoin/baycoin/baycoin'
+import { writeLink } from '../../baycoin/baycoin'
 
 export default function submitClick() {
   //event.preventDefault();
